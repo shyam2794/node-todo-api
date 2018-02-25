@@ -33,7 +33,7 @@ app.get('/todos',(req,res) => {
 // the route with parameters should be mentioned with "colon :" --> "/:id"
 
 app.get('/todos/:id',(req,res) => {
-// validating whether the id . 
+// validating whether the id .
    if(!ObjectID.isValid(req.params.id))
    {
     var err = { errorMessage:"The entered id is invalid please enter a valid id"} ;
@@ -42,13 +42,14 @@ app.get('/todos/:id',(req,res) => {
    }
 
      Todo.findById(req.params.id)
-     .then(todo => {
+     .then( todo => {
        if(!todo)
        {  var err = { errorMessage:"There is no todo available in this id"}
-          res.send(err)
+          res.status(404).send(err)
+          return ; 
        }
-          res.send({todo})})
-      .catch(err => res.status(400).send(err))
+       res.send({todo})
+     }).catch(err => res.status(400).send(err))
 })
 
 app.listen(5000,() => {
