@@ -21,10 +21,16 @@ app.post('/todos',(req,res) => {
   .catch(err => res.status(400).send(err))
 })
 
+app.get('/todos',(req,res) => {
+     Todo.find()
+     .then( Todos => res.send({Todos}))
+     .catch(err => res.status(400).send(err))
+})
+
 app.listen(5000,() => {
   console.log('The app has started at port 5000')
 })
 
 module.exports = {
-  app 
+  app
 }
