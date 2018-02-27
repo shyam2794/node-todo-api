@@ -1,3 +1,5 @@
+// mongo connection URL in local - mongod.exe --dbpath C:\Users\ADMIN\Desktop\mongo-data
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var {ObjectID} = require('mongodb');
@@ -46,14 +48,16 @@ app.get('/todos/:id',(req,res) => {
        if(!todo)
        {  var err = { errorMessage:"There is no todo available in this id"}
           res.status(404).send(err)
-          return ; 
+          return ;
        }
        res.send({todo})
      }).catch(err => res.status(400).send(err))
 })
 
-app.listen(5000,() => {
-  console.log('The app has started at port 5000')
+const port = process.env.PORT || 5000;
+
+app.listen(port,() => {
+  console.log(`The app has started at port ${port}`);
 })
 
 module.exports = {
