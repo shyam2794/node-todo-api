@@ -28,7 +28,7 @@ Todo.findOne({_id:id})
 .then(todo => console.log(todo))
 .catch(err => console.log(err))
 
-// using findOne will return the first occurence of the document which is a object
+// using findById will return a record matching with id which is a object
 // when the document is not found it returns "null" instead of empty array.
 // use this when you are finding a specific document by id .
 

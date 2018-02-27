@@ -54,6 +54,28 @@ app.get('/todos/:id',(req,res) => {
      }).catch(err => res.status(400).send(err))
 })
 
+app.delete('/todos/:id' , (req,res) => {
+       if(!ObjectID.isValid(req.params.id))
+       {
+         var err = { errorMessage:"The entered id is invalid please enter a valid id"} ;
+         res.status(400).send(err) ;
+         return ;
+       }
+
+       Todo.findByIdAndRemove(req.params.id)
+       .then(doc => {
+         if(!doc)
+         {
+           var err = { errorMessage:"There is no todo available in this id"}
+             res.status(404).send(err)
+             return ;
+         }
+        res.send(doc);
+      }).catch(err =>res.status(400).send(err))
+
+})
+
+
 const port = process.env.PORT || 5000;
 
 app.listen(port,() => {
