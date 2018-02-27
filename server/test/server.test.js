@@ -20,7 +20,7 @@ beforeEach(done => {
   .catch(err => done())
 })
 
-describe('Todo POST/',() => {
+describe('Todo POST/todos',() => {
 
     it('should create a new todo and save in mongo',(done) => {
           var text = "testing data";
@@ -67,7 +67,7 @@ describe('Todo POST/',() => {
 
 });
 
-describe('Todo GET/' , () => {
+describe('Todo GET/todos' , () => {
 
     it('should get the list of todos' , (done) => {
         request(app)
@@ -80,7 +80,7 @@ describe('Todo GET/' , () => {
     })
 })
 
-describe('Todo GET/:id' , () => {
+describe('Todo GET/todos/:id' , () => {
   it('should return a error when the id is invalid',(done)=> {
     var id = "1234";
     request(app)
@@ -113,5 +113,52 @@ describe('Todo GET/:id' , () => {
     })
     .end(done);
   })
+})
 
+  describe('DELETE /todos/:id',() => {
+
+    it('should delete a todo from database',(done)=>{
+         var id = '5a92d591403e573dd4521c9e'
+        request(app)
+        .delete(`/todos/${id}`)
+        .expect(200)
+        .expect(res => {
+          expect(res.body.doc._id).toBe(id)
+        })
+        .end((err,res) => {
+          if(err)
+          {
+            done(err);
+            return;
+          }
+
+          Todo.findById(id).then(todo => {
+            expect(todo).toBeNull();
+            done();
+          })
+          .catch(err => console.log(err))
+        })
+    })
+
+    it('should send error when id to be deleted is not found',(done)=>{
+         var id = '6a92d591403e573dd4521c9e';
+         request(app)
+         .delete(`/todos/${id}`)
+         .expect(404)
+         .expect(res => {
+           expect(res.body.errorMessage).toBe('There is no todo available in this id')
+         })
+         .end(done)
+    })
+
+    it('should send error when the id is invalid',(done)=>{
+      var id = '123';
+      request(app)
+      .delete(`/todos/${id}`)
+      .expect(400)
+      .expect(res => {
+        expect(res.body.errorMessage).toBe('The entered id is invalid please enter a valid id')
+      })
+      .end(done)
+    })
 })
