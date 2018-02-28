@@ -1,16 +1,26 @@
+
 var mongoose = require('mongoose') ;
 
 mongoose.Promise = global.Promise ;
 
-if(process.env.NODE_ENV === 'production')
+var url = process.env.MONGO_URL ;
+
+var env = process.env.NODE_ENV || 'development' ;
+
+console.log('The environment is ',env);
+
+if(env === 'production')
 {
-    mongoose.connect('mongodb://nodeapidb:password@ds249818.mlab.com:49818/node_todo_api');
+    mongoose.connect(url);
     return;
-}
-else {
+}else if (env === 'development'){
   mongoose.connect('mongodb://localhost:27017/TodoApp');
-  return ; 
+  return ;
+}else {
+  mongoose.connect('mongodb://localhost:27017/TodoAppTest');
+  return ;
 }
+
 
 //mongodb://localhost:27017/TodoApp
 // module.exports = {
