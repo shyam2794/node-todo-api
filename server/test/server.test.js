@@ -9,7 +9,9 @@ var todos = [
               { _id:new ObjectID("5a92d591403e573dd4521c9e"),
                 text:"test todo 1"} ,
               { _id:new ObjectID("5a92d591403e573dd4521c9f"),
-                text:"test todo 2"}
+                text:"test todo 2",
+                completed:true,
+                completedAt:1519795351168}
             ];
 
 // This runs before each test
@@ -161,4 +163,37 @@ describe('Todo GET/todos/:id' , () => {
       })
       .end(done)
     })
+})
+
+describe('Todo PATCH/todos/:id' , () => {
+
+    it('should update the todo' , (done) => {
+          var id = "5a92d591403e573dd4521c9e" ;
+
+          request(app)
+          .patch(`/todos/${id}`)
+          .send({text:"test todo",completed:true})
+          .expect(200)
+          .expect(res => {
+            expect(res.body.todo.text).toBe('test todo') ;
+            expect(res.body.todo.completed).toBe(true);
+            expect(res.body.todo.completedAt).toBeGreaterThan(0);
+          })
+          .end(done)
+    })
+
+    it('should set completedAt to null when todo is not completed' , (done) => {
+          var id = "5a92d591403e573dd4521c9f" ;
+
+          request(app)
+          .patch(`/todos/${id}`)
+          .send({completed:false})
+          .expect(200)
+          .expect(res => {
+            expect(res.body.todo.completed).toBe(false);
+            expect(res.body.todo.completedAt).toBeNull();
+          })
+          .end(done)
+    })
+
 })
