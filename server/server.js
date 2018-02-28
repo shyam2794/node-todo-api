@@ -3,6 +3,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var {ObjectID} = require('mongodb');
+var _ = require('lodash');
 //var {mongoose} = require('./db/mongoose');
 
 require('./db/mongoose');
@@ -54,6 +55,7 @@ app.get('/todos/:id',(req,res) => {
      }).catch(err => res.status(400).send(err))
 })
 
+// deleting a todo by id
 app.delete('/todos/:id' , (req,res) => {
        if(!ObjectID.isValid(req.params.id))
        {
@@ -75,6 +77,38 @@ app.delete('/todos/:id' , (req,res) => {
 
 })
 
+//updating a todo by id
+app.patch('/todos/:id',(req,res) => {
+
+    if(!ObjectID.isValid(req.params.id))
+    {
+      var err = { errorMessage:"The entered id is invalid please enter a valid id"} ;
+      res.status(400).send(err) ;
+      return ;
+    }
+    var body = _.pick(req.body,['text','completed']);
+
+// when the completed is set to true then make sure to set the completedAt timestamp to current time 
+    if(_.isBoolean(body.completed) && body.completed)
+    {
+      body.completedAt = new Date().getTime();
+    } else {
+      body.completed = false ;
+      body.completedAt = null ;
+    }
+
+    Todo.findByIdAndUpdate(req.params.id,{$set:body},{new:true})
+    .then(todo => {
+          if(!todo)
+          {
+            var err = { errorMessage:"There is no todo available in this id"}
+              res.status(404).send(err)
+              return ;
+          }
+    res.send({todo});
+  }).catch(err => res.status(400).send(err))
+
+})
 
 const port = process.env.PORT || 5000;
 
